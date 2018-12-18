@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D900926B-1357-454D-A5C6-40BCF7AC8B84}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>cleartype.cs</RootNamespace>
-    <AssemblyName>cleartype.cs</AssemblyName>
+    <RootNamespace>FontSmoothingUtility</RootNamespace>
+    <AssemblyName>cleartypetoggle</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
