@@ -1,2 +1,2 @@
 # WinClearTypeToggle
-Smaill utility in C# to toggle font smoothing (Cleartype)
+Small utility in C# to toggle font smoothing (Cleartype)
