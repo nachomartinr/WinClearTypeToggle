@@ -13,6 +13,9 @@ namespace FontSmoothingUtility
         const uint SPI_SETFONTSMOOTHING = 75;
         const uint SPI_UPDATEINI = 0x1;
         const UInt32 SPIF_UPDATEINIFILE = 0x1;
+        const UInt32 SPIF_SENDCHANGE = 0x1;        
+        const uint SPI_GETFONTSMOOTHINGTYPE = 0x200B;
+        const uint FE_FONTSMOOTHINGCLEARTYPE = 0x2;
 
         public static bool GetFontSmoothing()
         {
@@ -37,7 +40,7 @@ namespace FontSmoothingUtility
             bool iResult;
             int pv = 0;
             /* Set the font smoothing value to disabled. */
-            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 0, ref pv, SPIF_UPDATEINIFILE);
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 0, ref pv, SPIF_UPDATEINIFILE|SPIF_SENDCHANGE);
             Console.WriteLine("Disabled: {0}", iResult);
         }
 
@@ -46,8 +49,10 @@ namespace FontSmoothingUtility
             bool iResult;
             int pv = 0;
             /* Set the font smoothing value to enabled. */
-            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 1, ref pv, SPIF_UPDATEINIFILE);
-            Console.WriteLine("Enabled: {0}", iResult);
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 1, ref pv, SPIF_UPDATEINIFILE|SPIF_SENDCHANGE);
+            Console.WriteLine("Smoothing Enabled: {0}", iResult);
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHINGTYPE, 0, FE_FONTSMOOTHINGCLEARTYPE, SPIF_UPDATEINIFILE|SPIF_SENDCHANGE)
+            Console.WriteLine("Cleartype Enabled: {0}", iResult);
 
         }
 
