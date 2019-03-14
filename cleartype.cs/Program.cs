@@ -9,17 +9,27 @@ namespace FontSmoothingUtility
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref int pvParam, uint fWinIni);
 
-        const uint SPI_GETFONTSMOOTHING = 74;
-        const uint SPI_SETFONTSMOOTHING = 75;
-        const uint SPI_UPDATEINI = 0x1;
-        const UInt32 SPIF_UPDATEINIFILE = 0x1;
+        const int SPI_GETFONTSMOOTHING = 0x004A;
+        const int SPI_GETFONTSMOOTHINGTYPE = 0x200A;
+
+        const int SPI_SETFONTSMOOTHING = 0x004B;
+        const int SPI_SETFONTSMOOTHINGTYPE = 0x200B;
+
+        const int SPI_GETCLEARTYPE = 0x1048;
+        const int SPI_SETCLEARTYPE = 0x1049;
+
+        const int FE_FONTSMOOTHINGSTANDARD = 0x1;
+        const int FE_FONTSMOOTHINGCLEARTYPE = 0x2;
+
+        const int SPIF_UPDATEINIFILE = 0x1;
+        const int SPIF_SENDCHANGE = 0x2;
 
         public static bool GetFontSmoothing()
         {
             bool iResult;
             int pv = 0;
             /* Get the font smoothing value. */
-            iResult = SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, ref pv, 0);
+            iResult = SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, ref pv, 0);            
             if (pv > 0)
             {
                 // font smoothing is on.
@@ -36,18 +46,56 @@ namespace FontSmoothingUtility
         {
             bool iResult;
             int pv = 0;
-            /* Set the font smoothing value to disabled. */
-            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 0, ref pv, SPIF_UPDATEINIFILE);
-            Console.WriteLine("Disabled: {0}", iResult);
+            /* Set the font smoothing value to disabled. */            
+            SystemParametersInfo(SPI_SETCLEARTYPE, 0, ref pv, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+            
+            pv = 0;
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 0, ref pv, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+            Console.WriteLine("Font Smoothing Disabled: {0}", iResult);
+
+        }
+
+        private static string GetFontSmoothingTypeStr(int value)
+        {
+            string typeStr;
+
+            switch(value)
+            {
+                case FE_FONTSMOOTHINGSTANDARD:
+                    typeStr = "Standard";
+                    break;
+                case FE_FONTSMOOTHINGCLEARTYPE:
+                    typeStr = "ClearType";
+                    break;
+                default:
+                    typeStr = "Unknown";
+                    break;
+            }
+
+            return typeStr;
         }
 
         public static void EnableFontSmoothing()
         {
             bool iResult;
-            int pv = 0;
+
             /* Set the font smoothing value to enabled. */
-            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 1, ref pv, SPIF_UPDATEINIFILE);
-            Console.WriteLine("Enabled: {0}", iResult);
+            // Turn on font smoothing            
+            int pv = 0;
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHING, 1, ref pv, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+            Console.WriteLine("Font Smoothing Enabled: {0}", iResult);
+
+            pv = 1;
+            iResult = SystemParametersInfo(SPI_SETCLEARTYPE, 0, ref pv, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+ 
+            pv = FE_FONTSMOOTHINGCLEARTYPE;
+            iResult = SystemParametersInfo(SPI_SETFONTSMOOTHINGTYPE, 0, ref pv, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+
+            int smoothingType = 0;
+            if (SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, ref smoothingType, 0))
+            {
+                Console.WriteLine("Smoothing type: {0}", GetFontSmoothingTypeStr(smoothingType));
+            }
 
         }
 
